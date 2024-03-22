@@ -43,7 +43,7 @@ public class NumericListForm implements IIntruderPayloadType {
         this.numericPayloadModel = new NumericPayloadModel(0, 10, 1, 1);
     }
 
-    public void setFormValuesInModel() throws Exception {
+    public void setFormValuesInModel(boolean isHexMode) throws Exception {
         String from = numericFromText.getText();
         String to = numericToText.getText();
         String step = numericStepText.getText();
@@ -80,6 +80,7 @@ public class NumericListForm implements IIntruderPayloadType {
         numericPayloadModel.setTo(toVal);
         numericPayloadModel.setStep(stepVal);
         numericPayloadModel.setMinDigits(numDigits);
+        numericPayloadModel.setHexMode(isHexMode);
     }
 
     @Override

@@ -223,7 +223,7 @@ public class WSIntruder implements ContainerProvider {
 
                 // Validate form and set values in model
                 try {
-                    numericListForm.setFormValuesInModel();
+                    numericListForm.setFormValuesInModel(bruteForcer.getHexModeCheckBox().isSelected());
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(
                             api.userInterface().swingUtils().suiteFrame(),

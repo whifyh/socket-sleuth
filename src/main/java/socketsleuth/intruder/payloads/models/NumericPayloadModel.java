@@ -24,6 +24,15 @@ public class NumericPayloadModel implements IPayloadModel<String> {
     private int to;
     private int step;
     private int minDigits;
+    private boolean isHexMode = false;
+
+    public boolean isHexMode() {
+        return isHexMode;
+    }
+
+    public void setHexMode(boolean hexMode) {
+        isHexMode = hexMode;
+    }
 
     public NumericPayloadModel(int from, int to, int step, int minDigits) {
         this.from = from;
@@ -69,8 +78,15 @@ public class NumericPayloadModel implements IPayloadModel<String> {
             }
 
             private String formatNumber(int number) {
-                String format = "%0" + minDigits + "d";
-                return String.format(format, number);
+                if (isHexMode) {
+                    // 返回十六进制格式的字符串
+                    String hexFormat = "%" + minDigits + "s";
+                    return String.format(hexFormat, Integer.toHexString(number)).replace(' ', '0').toUpperCase();
+                } else {
+                    // 返回十进制格式的字符串
+                    String decimalFormat = "%0" + minDigits + "d";
+                    return String.format(decimalFormat, number);
+                }
             }
         };
     }
