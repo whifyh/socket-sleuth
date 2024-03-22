@@ -125,7 +125,8 @@ public class Sniper {
                 String newInput = replacePlaceholders(baseInput, payload);
                 if (isHexMode) {
                     // 将十六进制字符串转换为字节数组
-                    byte[] binaryData = hexStringToByteArray(newInput);
+                    byte[] binaryData = hexStringToBytes(newInput);
+                    api.logging().raiseInfoEvent("【hex发送】:" + bytesToHexString(binaryData));
                     proxyWebSocket.sendBinaryMessage(ByteArray.byteArray(binaryData), selectedDirection);
                     messageView.getTableModel().addMessage(newInput, selectedDirection);
                     sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
@@ -143,7 +144,6 @@ public class Sniper {
                 }
             }
 
-            // Wait a while to catch responses from the final request
             try {
                 api.logging().logToOutput("finished - cleaning up");
                 Thread.sleep(5000);
@@ -176,5 +176,32 @@ public class Sniper {
             byteArray[i] = (byte) Integer.parseInt(hexBytes[i], 16);
         }
         return byteArray;
+    }
+
+    public static String bytesToHexString(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            String hex = Integer.toHexString(0xFF & bytes[i]);
+            if (hex.length() == 1) {
+                // 如果是一位的话，前面补0
+                hexString.append('0');
+            }
+            hexString.append(hex);
+            if (i < bytes.length - 1) {
+                hexString.append(" "); // 在字节间加入空格分隔
+            }
+        }
+        return hexString.toString().toUpperCase(); // 转换成大写
+    }
+
+    public static byte[] hexStringToBytes(String hexString) {
+        hexString = hexString.replaceAll("\\s", ""); // 移除字符串中的空格
+        byte[] bytes = new byte[hexString.length() / 2];
+        for (int i = 0; i < bytes.length; i++) {
+            int index = i * 2;
+            int value = Integer.parseInt(hexString.substring(index, index + 2), 16);
+            bytes[i] = (byte) value;
+        }
+        return bytes;
     }
 }
