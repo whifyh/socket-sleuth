@@ -17,6 +17,7 @@
 package socketsleuth.intruder.executors;
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.proxy.websocket.ProxyWebSocket;
 import burp.api.montoya.websocket.Direction;
 import burp.api.montoya.websocket.TextMessage;
@@ -87,7 +88,8 @@ public class Sniper {
     public void start(ProxyWebSocket proxyWebSocket,
                       int socketId, IPayloadModel<String> payloadModel,
                       String baseInput,
-                      Direction selectedDirection) {
+                      Direction selectedDirection,
+                      Boolean isHexMode) {
         if (workerThread != null && workerThread.isAlive()) {
             api.logging().logToOutput("Intruder action is already running. Wait before new action.");
             return;
@@ -121,9 +123,18 @@ public class Sniper {
             api.logging().logToOutput("Sniper execution started");
             for (String payload : payloadModel) {
                 String newInput = replacePlaceholders(baseInput, payload);
-                proxyWebSocket.sendTextMessage(newInput, selectedDirection);
-                messageView.getTableModel().addMessage(newInput, selectedDirection);
-                sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
+                if (isHexMode) {
+                    // 将十六进制字符串转换为字节数组
+                    byte[] binaryData = hexStringToByteArray(newInput);
+                    proxyWebSocket.sendBinaryMessage(ByteArray.byteArray(binaryData), selectedDirection);
+                    messageView.getTableModel().addMessage(newInput, selectedDirection);
+                    sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
+                } else {
+                    proxyWebSocket.sendTextMessage(newInput, selectedDirection);
+                    messageView.getTableModel().addMessage(newInput, selectedDirection);
+                    sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
+                }
+
                 int delay = rand.nextInt(maxDelay - minDelay + 1) + minDelay;
                 try {
                     Thread.sleep(delay);
@@ -156,5 +167,14 @@ public class Sniper {
         }
         matcher.appendTail(result);
         return result.toString();
+    }
+
+    private static byte[] hexStringToByteArray(String hexString) {
+        String[] hexBytes = hexString.split("\\s+");
+        byte[] byteArray = new byte[hexBytes.length];
+        for (int i = 0; i < hexBytes.length; i++) {
+            byteArray[i] = (byte) Integer.parseInt(hexBytes[i], 16);
+        }
+        return byteArray;
     }
 }
