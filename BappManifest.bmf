@@ -1,0 +1,13 @@
+Uuid: 42bda36c7fab496a87313943df698668
+ExtensionType: 1
+Name: Socket Sleuth
+RepoName: socket-sleuth
+ScreenVersion: 0.1
+SerialVersion: 4
+MinPlatformVersion: 12
+ProOnly: False
+Author: Snyk
+ShortDescription: Add additional functionality for pentesting websocket based applications.
+EntryPoint: target/SocketSleuth-0.1-beta-jar-with-dependencies.jar
+BuildCommand: mvn clean package
+SupportedProducts: Pro, Community
