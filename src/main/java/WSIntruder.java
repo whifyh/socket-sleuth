@@ -249,7 +249,8 @@ public class WSIntruder implements ContainerProvider {
                         numericListForm.getPayloadModel(),
                         messageEditor.getContents().toString(),
                         bruteForcer.getSelectedDirection(),
-                        bruteForcer.getHexModeCheckBox().isSelected()
+                        bruteForcer.getHexModeCheckBox().isSelected(),
+                        bruteForcer.getListModeCheckBox().isSelected()
                 );
             }
         });
@@ -297,7 +298,8 @@ public class WSIntruder implements ContainerProvider {
                         simpleList.getPayloadModel(),
                         messageEditor.getContents().toString(),
                         bruteForcer.getSelectedDirection(),
-                        bruteForcer.getHexModeCheckBox().isSelected());
+                        bruteForcer.getHexModeCheckBox().isSelected(),
+                        bruteForcer.getListModeCheckBox().isSelected());
             }
         });
 

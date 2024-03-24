@@ -89,21 +89,23 @@ public class Sniper {
                       int socketId, IPayloadModel<String> payloadModel,
                       String baseInput,
                       Direction selectedDirection,
-                      Boolean isHexMode) {
+                      Boolean isHexMode,
+                      Boolean isListMode) {
         if (workerThread != null && workerThread.isAlive()) {
             api.logging().logToOutput("Intruder action is already running. Wait before new action.");
             return;
         }
 
-        List<String> payloadPositions = Utils.extractPayloadPositions(baseInput);
-        if (payloadPositions.size() == 0) {
-            JOptionPane.showMessageDialog(
-                    api.userInterface().swingUtils().suiteFrame(),
-                    "Please ensure at least one payload position is defined.",
-                    "Invalid configuration", JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
+        // 替换符是否存在检测
+//        List<String> payloadPositions = Utils.extractPayloadPositions(baseInput);
+//        if (payloadPositions.size() == 0) {
+//            JOptionPane.showMessageDialog(
+//                    api.userInterface().swingUtils().suiteFrame(),
+//                    "Please ensure at least one payload position is defined.",
+//                    "Invalid configuration", JOptionPane.WARNING_MESSAGE
+//            );
+//            return;
+//        }
 
         api.logging().logToOutput(
                 "Starting sniper payload insertion with Min Delay: "
@@ -122,25 +124,15 @@ public class Sniper {
         workerThread = new Thread(() -> {
             api.logging().logToOutput("Sniper execution started");
             for (String payload : payloadModel) {
-                String newInput = replacePlaceholders(baseInput, payload);
-                if (isHexMode) {
-                    // 将十六进制字符串转换为字节数组
-                    byte[] binaryData = hexStringToBytes(newInput);
-                    api.logging().raiseInfoEvent("【hex发送】:" + bytesToHexString(binaryData));
-                    proxyWebSocket.sendBinaryMessage(ByteArray.byteArray(binaryData), selectedDirection);
-                    messageView.getTableModel().addMessage(newInput, selectedDirection);
-                    sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
+                if (isListMode) {
+                    List<String> lineInput = splitAndTrim(baseInput);
+                    for (String input : lineInput) {
+                        String newInput = replacePlaceholders(input, payload);
+                        sendMessage(proxyWebSocket, selectedDirection, isHexMode, newInput, rand);
+                    }
                 } else {
-                    proxyWebSocket.sendTextMessage(newInput, selectedDirection);
-                    messageView.getTableModel().addMessage(newInput, selectedDirection);
-                    sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
-                }
-
-                int delay = rand.nextInt(maxDelay - minDelay + 1) + minDelay;
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                    String newInput = replacePlaceholders(baseInput, payload);
+                    sendMessage(proxyWebSocket, selectedDirection, isHexMode, newInput, rand);
                 }
             }
 
@@ -156,6 +148,29 @@ public class Sniper {
         });
 
         workerThread.start();
+    }
+
+    private void sendMessage(ProxyWebSocket proxyWebSocket, Direction selectedDirection, Boolean isHexMode, String newInput, Random rand) {
+        if (isHexMode) {
+            // 将十六进制字符串转换为字节数组
+            byte[] binaryData = hexStringToBytes(newInput);
+            api.logging().raiseInfoEvent("[Hex]:" + bytesToHexString(binaryData));
+            proxyWebSocket.sendBinaryMessage(ByteArray.byteArray(binaryData), selectedDirection);
+            messageView.getTableModel().addMessage("[Hex]" + newInput, selectedDirection);
+            sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
+        } else {
+            api.logging().raiseInfoEvent("[String]:" + newInput);
+            proxyWebSocket.sendTextMessage(newInput, selectedDirection);
+            messageView.getTableModel().addMessage(newInput, selectedDirection);
+            sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
+        }
+
+        int delay = rand.nextInt(maxDelay - minDelay + 1) + minDelay;
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private static String replacePlaceholders(String input, String replacement) {
@@ -203,5 +218,28 @@ public class Sniper {
             bytes[i] = (byte) value;
         }
         return bytes;
+    }
+
+    public static List<String> splitAndTrim(String input) {
+        List<String> result = new ArrayList<>();
+
+        // 按换行符分割字符串
+        String[] lines = input.split("\\r?\\n");
+
+        // 遍历每一行
+        for (String line : lines) {
+            // 去除行首和行尾的空格
+            String trimmedLine = line.trim();
+
+            // 使用正则表达式将多个空格替换为单个空格
+            String formattedLine = trimmedLine.replaceAll("\\s+", " ");
+
+            // 如果处理后的行不为空,则添加到结果列表中
+            if (!formattedLine.isEmpty()) {
+                result.add(formattedLine);
+            }
+        }
+
+        return result;
     }
 }
