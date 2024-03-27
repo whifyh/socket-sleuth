@@ -24,6 +24,7 @@ import java.util.List;
 
 class JSONRPCMessage {
     private int id;
+    //2
     private String message;
     private Direction direction;
     private LocalDateTime time;
