@@ -96,7 +96,7 @@ public class Sniper {
             return;
         }
 
-        //测试提交
+        //测试提交1
         // 替换符是否存在检测
 //        List<String> payloadPositions = Utils.extractPayloadPositions(baseInput);
 //        if (payloadPositions.size() == 0) {
