@@ -116,8 +116,10 @@ public class WSIntruder implements ContainerProvider {
                         break;
                     case SNIPER:
                         setWsIntruderPanel(constructJSONRPCValueBruteForcerPanel());
+                        break;
                     case QiangZhan:
                         setWsIntruderPanel(constructQiangZhanPanel());
+                        break;
                     default:
                         break;
                 }
