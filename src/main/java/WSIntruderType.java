@@ -15,7 +15,8 @@
  */
 public enum WSIntruderType {
     JSONRPCMETHOD("JSONRPC method discovery"),
-    SNIPER("Sniper");
+    SNIPER("Sniper"),
+    QiangZhan("QiangZhan");
 
     private final String value;
 

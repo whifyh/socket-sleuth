@@ -24,6 +24,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.json.JSONException;
 import org.json.JSONObject;
+import socketsleuth.intruder.executors.Sniper;
 import socketsleuth.intruder.payloads.payloads.ui.NumericListForm;
 import websocket.MessageProvider;
 
@@ -115,6 +116,8 @@ public class WSIntruder implements ContainerProvider {
                         break;
                     case SNIPER:
                         setWsIntruderPanel(constructJSONRPCValueBruteForcerPanel());
+                    case QiangZhan:
+                        setWsIntruderPanel(constructQiangZhanPanel());
                     default:
                         break;
                 }
@@ -202,6 +205,14 @@ public class WSIntruder implements ContainerProvider {
 
         return bruteForcer.getContainer();
     }
+
+    private JPanel constructQiangZhanPanel() {
+        QiangZhan qiangZhan = new QiangZhan();
+        qiangZhan.setExecutor(new Sniper(this.api, null, null));
+        return qiangZhan.getJpanel();
+    }
+
+
 
     private void setBruteForcerPayloadNumeric(JSONRPCValueBruteForcer bruteForcer) {
         NumericListForm numericListForm = new NumericListForm(this.api);

@@ -88,7 +88,8 @@ public class Sniper {
     }
 
     public void start(ProxyWebSocket proxyWebSocket,
-                      int socketId, IPayloadModel<String> payloadModel,
+                      int socketId,
+                      IPayloadModel<String> payloadModel,
                       String baseInput,
                       Direction selectedDirection,
                       Boolean isHexMode,
@@ -107,9 +108,13 @@ public class Sniper {
         );
 
         Consumer<TextMessage> responseSubscriber = textMessage -> {
-            messageView.getTableModel().addMessage(textMessage.payload(), textMessage.direction());
+            if(null != messageView) {
+                messageView.getTableModel().addMessage(textMessage.payload(), textMessage.direction());
+            }
         };
-        this.socketProvider.subscribeTextMessage(socketId, responseSubscriber);
+        if (socketProvider != null) {
+            this.socketProvider.subscribeTextMessage(socketId, responseSubscriber);
+        }
 
 
         Random rand = new Random();
@@ -118,10 +123,10 @@ public class Sniper {
             for (String payload : payloadModel) {
                 ProxyWebSocket now = proxyWebSocket;
                 // 是否保持, 替换最新存货的socket
-                whifyhTT.SocketMe activeSocket = whifyhTT.getActiveSocket();
-                if (activeSocket != null && activeSocket.active) {
-                    now = activeSocket.socket;
+                if (isKeepAlive) {
+                    now = whifyhTT.getActiveSocket().socket;
                 }
+                // 是否List模式
                 if (isListMode) {
                     List<String> lineInput = splitAndTrim(baseInput);
                     for (String input : lineInput) {
@@ -140,7 +145,9 @@ public class Sniper {
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             } finally {
-                this.socketProvider.unsubscribeTextMessage(socketId, responseSubscriber);
+                if (socketProvider != null) {
+                    this.socketProvider.unsubscribeTextMessage(socketId, responseSubscriber);
+                }
                 api.logging().logToOutput("clean up complete");
             }
         });
@@ -149,17 +156,22 @@ public class Sniper {
     }
 
     private void sendMessage(ProxyWebSocket proxyWebSocket, Direction selectedDirection, Boolean isHexMode, String newInput, Random rand) {
+        // 是否16进制模式
         if (isHexMode) {
             // 将十六进制字符串转换为字节数组
             byte[] binaryData = hexStringToBytes(newInput);
             api.logging().raiseInfoEvent("[Hex]:" + bytesToHexString(binaryData));
             proxyWebSocket.sendBinaryMessage(ByteArray.byteArray(binaryData), selectedDirection);
-            messageView.getTableModel().addMessage("[Hex]" + newInput, selectedDirection);
+            if (messageView != null) {
+                messageView.getTableModel().addMessage("[Hex]" + newInput, selectedDirection);
+            }
             sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
         } else {
             api.logging().raiseInfoEvent("[String]:" + newInput);
             proxyWebSocket.sendTextMessage(newInput, selectedDirection);
-            messageView.getTableModel().addMessage(newInput, selectedDirection);
+            if (messageView != null) {
+               messageView.getTableModel().addMessage(newInput, selectedDirection);
+            }
             sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
         }
 
