@@ -23,14 +23,11 @@ import burp.api.montoya.websocket.Direction;
 import burp.api.montoya.websocket.TextMessage;
 import socketsleuth.intruder.WSIntruderMessageView;
 import socketsleuth.intruder.payloads.models.IPayloadModel;
-import socketsleuth.intruder.payloads.payloads.Utils;
 import websocket.MessageProvider;
 import whifyh.whifyhTT;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -121,22 +118,30 @@ public class Sniper {
         workerThread = new Thread(() -> {
             api.logging().logToOutput("Sniper execution started");
             for (String payload : payloadModel) {
-                ProxyWebSocket now = proxyWebSocket;
-                // 是否保持, 替换最新存货的socket
+                List<ProxyWebSocket> sendWebSockets = new ArrayList<ProxyWebSocket>();
+                sendWebSockets.add(proxyWebSocket);
+                // 是否保持最新的socket
                 if (isKeepAlive) {
-                    now = whifyhTT.getActiveSocket().socket;
+                    sendWebSockets.clear();
+                    for (whifyhTT.SocketMe allActiveSocket : whifyhTT.getAllActiveSockets()) {
+                        sendWebSockets.add(allActiveSocket.socket);
+                    }
                 }
-                // 是否List模式
-                if (isListMode) {
-                    List<String> lineInput = splitAndTrim(baseInput);
-                    for (String input : lineInput) {
-                        String newInput = replacePlaceholders(input, payload);
+
+                for (ProxyWebSocket now : sendWebSockets) {
+                    // 是否List模式
+                    if (isListMode) {
+                        List<String> lineInput = splitAndTrim(baseInput);
+                        for (String input : lineInput) {
+                            String newInput = replacePlaceholders(input, payload);
+                            sendMessage(now, selectedDirection, isHexMode, newInput, rand);
+                        }
+                    } else {
+                        String newInput = replacePlaceholders(baseInput, payload);
                         sendMessage(now, selectedDirection, isHexMode, newInput, rand);
                     }
-                } else {
-                    String newInput = replacePlaceholders(baseInput, payload);
-                    sendMessage(now, selectedDirection, isHexMode, newInput, rand);
                 }
+
             }
 
             try {

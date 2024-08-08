@@ -3,13 +3,14 @@ package whifyh;
 import burp.api.montoya.proxy.websocket.ProxyWebSocket;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class whifyhTT {
 
     public static Map<Integer, SocketMe> proxyList = new HashMap<>();
 
-    public static SocketMe getActiveSocket() {
+    public static SocketMe getFirstActiveSocket() {
         for (Map.Entry<Integer, SocketMe> entry : proxyList.entrySet()) {
             if (entry.getValue().active) {
                 return entry.getValue();
@@ -17,12 +18,15 @@ public class whifyhTT {
         }
         try {
             Thread.sleep(1000);
-            return getActiveSocket();
+            return getFirstActiveSocket();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public static List<SocketMe> getAllActiveSockets() {
+        return proxyList.values().stream().filter(x -> x.active).toList();
+    }
 
     public static class SocketMe {
         public ProxyWebSocket socket;
@@ -36,6 +40,8 @@ public class whifyhTT {
         public void setActive(Boolean active) {
             this.active = active;
         }
+
+
     }
 
 }
