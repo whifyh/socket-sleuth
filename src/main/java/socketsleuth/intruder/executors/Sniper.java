@@ -25,10 +25,12 @@ import socketsleuth.intruder.WSIntruderMessageView;
 import socketsleuth.intruder.payloads.models.IPayloadModel;
 import socketsleuth.intruder.payloads.payloads.Utils;
 import websocket.MessageProvider;
+import whifyh.whifyhTT;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -90,23 +92,12 @@ public class Sniper {
                       String baseInput,
                       Direction selectedDirection,
                       Boolean isHexMode,
-                      Boolean isListMode) {
+                      Boolean isListMode,
+                      Boolean isKeepAlive) {
         if (workerThread != null && workerThread.isAlive()) {
             api.logging().logToOutput("Intruder action is already running. Wait before new action.");
             return;
         }
-
-        //测试提交1
-        // 替换符是否存在检测
-//        List<String> payloadPositions = Utils.extractPayloadPositions(baseInput);
-//        if (payloadPositions.size() == 0) {
-//            JOptionPane.showMessageDialog(
-//                    api.userInterface().swingUtils().suiteFrame(),
-//                    "Please ensure at least one payload position is defined.",
-//                    "Invalid configuration", JOptionPane.WARNING_MESSAGE
-//            );
-//            return;
-//        }
 
         api.logging().logToOutput(
                 "Starting sniper payload insertion with Min Delay: "
@@ -125,15 +116,21 @@ public class Sniper {
         workerThread = new Thread(() -> {
             api.logging().logToOutput("Sniper execution started");
             for (String payload : payloadModel) {
+                ProxyWebSocket now = proxyWebSocket;
+                // 是否保持, 替换最新存货的socket
+                whifyhTT.SocketMe activeSocket = whifyhTT.getActiveSocket();
+                if (activeSocket != null && activeSocket.active) {
+                    now = activeSocket.socket;
+                }
                 if (isListMode) {
                     List<String> lineInput = splitAndTrim(baseInput);
                     for (String input : lineInput) {
                         String newInput = replacePlaceholders(input, payload);
-                        sendMessage(proxyWebSocket, selectedDirection, isHexMode, newInput, rand);
+                        sendMessage(now, selectedDirection, isHexMode, newInput, rand);
                     }
                 } else {
                     String newInput = replacePlaceholders(baseInput, payload);
-                    sendMessage(proxyWebSocket, selectedDirection, isHexMode, newInput, rand);
+                    sendMessage(now, selectedDirection, isHexMode, newInput, rand);
                 }
             }
 

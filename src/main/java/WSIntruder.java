@@ -128,7 +128,6 @@ public class WSIntruder implements ContainerProvider {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame popup = new JFrame("WebSocket Connection Manager");
-
                 WSConnectionManager connectionManager = new WSConnectionManager(connectionTableModel);
                 connectionManager.getCancelButton().addActionListener(new ActionListener() {
                     @Override
@@ -242,7 +241,6 @@ public class WSIntruder implements ContainerProvider {
                 int maxDelay = (int) bruteForcer.getMaxDelaySpinner().getModel().getValue();
                 bruteForcer.getExecutor().setMinDelay(minDelay);
                 bruteForcer.getExecutor().setMaxDelay(maxDelay);
-
                 bruteForcer.getExecutor().start(
                         proxyWebSocket,
                         socketId,
@@ -250,7 +248,8 @@ public class WSIntruder implements ContainerProvider {
                         messageEditor.getContents().toString(),
                         bruteForcer.getSelectedDirection(),
                         bruteForcer.getHexModeCheckBox().isSelected(),
-                        bruteForcer.getListModeCheckBox().isSelected()
+                        bruteForcer.getListModeCheckBox().isSelected(),
+                        bruteForcer.getKeepAliveBox().isSelected()
                 );
             }
         });
@@ -291,7 +290,6 @@ public class WSIntruder implements ContainerProvider {
                 int maxDelay = (int) bruteForcer.getMaxDelaySpinner().getModel().getValue();
                 bruteForcer.getExecutor().setMinDelay(minDelay);
                 bruteForcer.getExecutor().setMaxDelay(maxDelay);
-
                 bruteForcer.getExecutor().start(
                         proxyWebSocket,
                         socketId,
@@ -299,7 +297,8 @@ public class WSIntruder implements ContainerProvider {
                         messageEditor.getContents().toString(),
                         bruteForcer.getSelectedDirection(),
                         bruteForcer.getHexModeCheckBox().isSelected(),
-                        bruteForcer.getListModeCheckBox().isSelected());
+                        bruteForcer.getListModeCheckBox().isSelected(),
+                        bruteForcer.getKeepAliveBox().isSelected());
             }
         });
 

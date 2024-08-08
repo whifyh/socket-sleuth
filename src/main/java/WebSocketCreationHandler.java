@@ -19,6 +19,7 @@ import burp.api.montoya.proxy.websocket.ProxyWebSocketCreation;
 import burp.api.montoya.proxy.websocket.ProxyWebSocketCreationHandler;
 import socketsleuth.WebSocketInterceptionRulesTableModel;
 import websocket.MessageProvider;
+import whifyh.whifyhTT;
 
 import javax.swing.*;
 import java.util.Map;
@@ -63,8 +64,6 @@ class WebSocketCreationHandler implements ProxyWebSocketCreationHandler {
 
     @Override
     public void handleWebSocketCreation(ProxyWebSocketCreation webSocketCreation) {
-        logger.logToOutput("New WS connection received");
-
         // Don't loose track of the selected table
         int selectedConnectionIndex = connectionTable.getSelectedRow();
         ListSelectionModel selectionModel = connectionTable.getSelectionModel();
@@ -83,6 +82,9 @@ class WebSocketCreationHandler implements ProxyWebSocketCreationHandler {
                 webSocketCreation.upgradeRequest(),
                 webSocketCreation.proxyWebSocket()
         ));
+        // 添加到中继
+        whifyhTT.proxyList.put(container.getTableRow().getSocketId(), new whifyhTT.SocketMe(webSocketCreation.proxyWebSocket(), true));
+        api.logging().raiseInfoEvent("检测到变化, 已经添加到中继");
 
         // TODO: Investigate if we can get the socketId form burp instead of making our own
         int socketId = this.connections.size();
@@ -113,7 +115,10 @@ class WebSocketCreationHandler implements ProxyWebSocketCreationHandler {
                         new SocketCloseCallback() {
                             @Override
                             public void handleConnectionClosed() {
+                                // 回调时设为false
+                                whifyhTT.proxyList.get(container.getTableRow().getSocketId()).setActive(false);
                                 container.getTableRow().setActive(false);
+                                api.logging().raiseInfoEvent("检测到WS发生close, 将设为false");
                                 tableModel.fireTableDataChanged();
                             }
                         },

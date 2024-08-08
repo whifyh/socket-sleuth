@@ -23,6 +23,7 @@ import burp.api.montoya.ui.editor.WebSocketMessageEditor;
 import socketsleuth.WebSocketInterceptionRulesTableModel;
 import socketsleuth.utils.CommentManager;
 import websocket.MessageProvider;
+import whifyh.whifyhTT;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
