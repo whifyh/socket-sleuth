@@ -47,8 +47,10 @@ public class QiangZhanStatus {
 
         playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
         for (Player player : players) {
-            JCheckBox jCheckBox = new JCheckBox(String.valueOf(player.id));
+
+            JCheckBox jCheckBox = new JCheckBox("ID:[" + player.id + "] Team:[" + (player.camp.equals(-1) ? "Red]" : "Blue]"));
             jCheckBox.addActionListener(e -> {
+                sendMessageListCache = null;
                 if (jCheckBox.isSelected()) {
                     selectedPlayerIdList.add(player.id);
                 } else {
