@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.proxy.websocket.*;
+import burp.api.montoya.websocket.Direction;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import socketsleuth.WebSocketInterceptionRulesTableModel;
 import websocket.MessageProvider;
+import whifyh.DataStatusManager;
+import whifyh.QiangZhanStatus;
 
 import javax.swing.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 class WebSocketMessageHandler implements ProxyMessageHandler {
 
@@ -40,6 +47,9 @@ class WebSocketMessageHandler implements ProxyMessageHandler {
     SocketCloseCallback socketCloseCallback;
     JSONRPCResponseMonitor responseMonitor;
     WebSocketAutoRepeater webSocketAutoRepeater;
+    // qiangzhan
+    HttpRequest request;
+    boolean gunfight = false;
 
     public WebSocketMessageHandler(
             MontoyaApi api,
@@ -51,7 +61,8 @@ class WebSocketMessageHandler implements ProxyMessageHandler {
             SocketCloseCallback socketCloseCallback,
             JSONRPCResponseMonitor responseMonitor,
             WebSocketAutoRepeater webSocketAutoRepeater,
-            MessageProvider socketProvider) {
+            MessageProvider socketProvider,
+            HttpRequest request) {
         this.api = api;
         this.socketId = socketId;
         this.logger = api.logging();
@@ -63,6 +74,10 @@ class WebSocketMessageHandler implements ProxyMessageHandler {
         this.responseMonitor = responseMonitor;
         this.webSocketAutoRepeater =  webSocketAutoRepeater;
         this.socketProvider = socketProvider;
+        this.request = request;
+        if (request.url().contains("gunfight")) {
+            gunfight = true;
+        }
     }
 
     @Override
@@ -109,8 +124,44 @@ class WebSocketMessageHandler implements ProxyMessageHandler {
                 this.matchReplaceRules,
                 stream.getInterceptedMessage()
         );
-
+        // qiangzhan
+        if (gunfight && DataStatusManager.booleanStatusMap.get("qiangzhan:startRecord")) {
+            if (interceptedTextMessage.direction().equals(Direction.SERVER_TO_CLIENT)) {
+                setGunfight(interceptedTextMessage.payload());
+            }
+        }
         return TextMessageReceivedAction.continueWith(interceptedTextMessage);
+    }
+
+    private void setGunfight(String payload) {
+        try {
+            JSONArray jsonObject = new JSONArray(payload);
+            int index0 = jsonObject.getInt(0);
+            int index1 = jsonObject.getInt(1);
+            // 开始游戏封包:2,1
+            if (index0 == 2 && index1 == 1) {
+                JSONObject roomData = jsonObject.getJSONObject(2).getJSONObject("roomData");
+                String id = roomData.getString("id");
+                JSONArray players = roomData.getJSONArray("players");
+
+                QiangZhanStatus.nowRoomId = id;
+                QiangZhanStatus.players = new ArrayList<>();
+                for (Object player : players) {
+                    QiangZhanStatus.players.add(new QiangZhanStatus.Player(
+                            ((JSONObject) player).getString("name"),
+                            ((JSONObject) player).getInt("id"),
+                            ((JSONObject) player).getInt("camp"),
+                            ((JSONObject) player).getString("openId")
+                    ));
+                }
+                QiangZhanStatus.refuse();
+                api.logging().raiseInfoEvent("[开始游戏]:" + payload + "[房间号]:" + QiangZhanStatus.nowRoomId);
+            }
+        } catch (Exception e) {
+            api.logging().raiseInfoEvent("[解析失败][开始游戏]:" + payload + " [报错原因]:" + e.getMessage() + e.getStackTrace()[e.getStackTrace().length - 1]);
+            QiangZhanStatus.controlRunningStatus = false;
+        }
+
     }
 
     private boolean shouldDropMessage(
@@ -241,7 +292,7 @@ class WebSocketMessageHandler implements ProxyMessageHandler {
                     if (!interceptedTextMessage.direction().toString().equals("SERVER_TO_CLIENT")) continue;
                 }
 
-                api.logging().logToOutput("direction rule: " + direction + " - message direction" + interceptedTextMessage.direction().toString());
+                api.logging().raiseInfoEvent("direction rule: " + direction + " - message direction" + interceptedTextMessage.direction().toString());
 
                 switch (matchType) {
                     case CONTAINS: {

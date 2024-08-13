@@ -24,7 +24,8 @@ import burp.api.montoya.websocket.TextMessage;
 import socketsleuth.intruder.WSIntruderMessageView;
 import socketsleuth.intruder.payloads.models.IPayloadModel;
 import websocket.MessageProvider;
-import whifyh.whifyhTT;
+import whifyh.DataStatusManager;
+import whifyh.QiangZhanStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +85,24 @@ public class Sniper {
         return workerThread.isAlive();
     }
 
+    public void qiangZhanKeepControl() {
+        maxDelay = 100;
+        minDelay = 50;
+        Random rand = new Random();
+        Thread keep = new Thread(() -> {
+            while (QiangZhanStatus.controlRunningStatus) {
+                for (DataStatusManager.SocketMe socketMe : DataStatusManager.getAllActiveSockets()) {
+                    for (String msg : QiangZhanStatus.getSendMessageList()) {
+                        sendMessage(socketMe.socket, Direction.CLIENT_TO_SERVER, false, msg, rand);
+                    }
+                }
+                api.logging().raiseInfoEvent("控制中...");
+            }
+            api.logging().raiseInfoEvent("控制结束");
+        });
+        keep.start();
+    }
+
     public void start(ProxyWebSocket proxyWebSocket,
                       int socketId,
                       IPayloadModel<String> payloadModel,
@@ -123,7 +142,7 @@ public class Sniper {
                 // 是否保持最新的socket
                 if (isKeepAlive) {
                     sendWebSockets.clear();
-                    for (whifyhTT.SocketMe allActiveSocket : whifyhTT.getAllActiveSockets()) {
+                    for (DataStatusManager.SocketMe allActiveSocket : DataStatusManager.getAllActiveSockets()) {
                         sendWebSockets.add(allActiveSocket.socket);
                     }
                 }

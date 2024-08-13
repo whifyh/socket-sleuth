@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import socketsleuth.intruder.executors.Sniper;
 import socketsleuth.intruder.payloads.payloads.ui.NumericListForm;
 import websocket.MessageProvider;
+import whifyh.QiangZhanStatus;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -119,6 +120,7 @@ public class WSIntruder implements ContainerProvider {
                         break;
                     case QiangZhan:
                         setWsIntruderPanel(constructQiangZhanPanel());
+                        QiangZhanStatus.api = api;
                         break;
                     default:
                         break;
