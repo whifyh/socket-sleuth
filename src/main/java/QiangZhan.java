@@ -8,8 +8,6 @@ import whifyh.QiangZhanStatus;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Iterator;
 import static burp.api.montoya.websocket.Direction.CLIENT_TO_SERVER;
 
@@ -33,13 +31,15 @@ public class QiangZhan {
     private JButton startControl;
     private JButton stopControl;
 
-    private JCheckBox stopActioncheckBox;
+    private JCheckBox moveDownCheckBox;
     private JCheckBox moveLeftCheckBox;
     private JCheckBox moverRightCheckBox;
     private JCheckBox jumpActioncheckBox;
     private JCheckBox meleeAttackActioncheckBox;
+    private JCheckBox grenadeAttackActioncheckBox;
     private JCheckBox voice1CheckBox;
     private JCheckBox voice2CheckBox;
+    private JCheckBox stopActioncheckBox;
 
     private IPayloadModel onceList = () -> new Iterator<>() {
         int i = 0;
@@ -73,12 +73,12 @@ public class QiangZhan {
             }
         });
 
-        stopActioncheckBox.addActionListener(e -> {
+        moveDownCheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
-            if (stopActioncheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("stop", "[1,204,4,[\"h\",\"%s\",%s,2]]");
+            if (moveDownCheckBox.isSelected()) {
+                QiangZhanStatus.functionMap.put("down", "[1,204,4,[\"h\",\"%s\",%s,1,0]]");
             } else {
-                QiangZhanStatus.functionMap.remove("stop");
+                QiangZhanStatus.functionMap.remove("down");
             }
         });
 
@@ -100,6 +100,15 @@ public class QiangZhan {
             }
         });
 
+        stopActioncheckBox.addActionListener(e -> {
+            QiangZhanStatus.sendMessageListCache = null;
+            if (stopActioncheckBox.isSelected()) {
+                QiangZhanStatus.functionMap.put("stop", "[1,204,4,[\"h\",\"%s\",%s,2]]");
+            } else {
+                QiangZhanStatus.functionMap.remove("stop");
+            }
+        });
+
         jumpActioncheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (jumpActioncheckBox.isSelected()) {
@@ -117,6 +126,17 @@ public class QiangZhan {
                 QiangZhanStatus.functionMap.put("melee", "[1,204,4,[\"h\",\"%s\",%s,11]]");
             } else {
                 QiangZhanStatus.functionMap.remove("melee");
+            }
+        });
+
+        grenadeAttackActioncheckBox.addActionListener(e -> {
+            QiangZhanStatus.sendMessageListCache = null;
+            if (grenadeAttackActioncheckBox.isSelected()) {
+                QiangZhanStatus.functionMap.put("grenade1", "[1,204,4,[\"h\",\"%s\",%s,5]]");
+                QiangZhanStatus.functionMap.put("grenade2", "[1,204,4,[\"h\",\"%s\",%s,6]]");
+            } else {
+                QiangZhanStatus.functionMap.remove("grenade1");
+                QiangZhanStatus.functionMap.remove("grenade2");
             }
         });
 
@@ -172,27 +192,27 @@ public class QiangZhan {
      */
     private void $$$setupUI$$$() {
         jpanel = new JPanel();
-        jpanel.setLayout(new GridLayoutManager(12, 5, new Insets(0, 0, 0, 0), -1, -1));
+        jpanel.setLayout(new GridLayoutManager(13, 5, new Insets(0, 0, 0, 0), -1, -1));
         quitButton = new JButton();
         quitButton.setText("Quit");
-        jpanel.add(quitButton, new GridConstraints(8, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        jpanel.add(quitButton, new GridConstraints(9, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         blueButton = new JButton();
         blueButton.setText("Blue");
-        jpanel.add(blueButton, new GridConstraints(8, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        jpanel.add(blueButton, new GridConstraints(9, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         redButton = new JButton();
         redButton.setText("Red");
-        jpanel.add(redButton, new GridConstraints(8, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        jpanel.add(redButton, new GridConstraints(9, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         quitTextField = new JTextField();
         quitTextField.setText("[1,368,4,[\"e\",\"11-3nkpMNF\",45427832,0]]");
-        jpanel.add(quitTextField, new GridConstraints(9, 2, 3, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        jpanel.add(quitTextField, new GridConstraints(10, 2, 3, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         blueTextField = new JTextField();
         blueTextField.setText("[1,368,4,[\"e\",\"11-3nkpMNF\",45427832,1]]");
-        jpanel.add(blueTextField, new GridConstraints(9, 3, 3, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        jpanel.add(blueTextField, new GridConstraints(10, 3, 3, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         redTextField = new JTextField();
         redTextField.setText("[1,368,4,[\"e\",\"11-3nkpMNF\",45427832,-1]]");
-        jpanel.add(redTextField, new GridConstraints(9, 0, 3, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        jpanel.add(redTextField, new GridConstraints(10, 0, 3, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final Spacer spacer1 = new Spacer();
-        jpanel.add(spacer1, new GridConstraints(7, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        jpanel.add(spacer1, new GridConstraints(8, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("RoomId:");
         jpanel.add(label1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -210,9 +230,9 @@ public class QiangZhan {
         startControl = new JButton();
         startControl.setText("startControl");
         jpanel.add(startControl, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        stopActioncheckBox = new JCheckBox();
-        stopActioncheckBox.setText("stop action");
-        jpanel.add(stopActioncheckBox, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        moveDownCheckBox = new JCheckBox();
+        moveDownCheckBox.setText("move down");
+        jpanel.add(moveDownCheckBox, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         moveLeftCheckBox = new JCheckBox();
         moveLeftCheckBox.setText("move left");
         jpanel.add(moveLeftCheckBox, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -225,15 +245,21 @@ public class QiangZhan {
         meleeAttackActioncheckBox = new JCheckBox();
         meleeAttackActioncheckBox.setText("melee attack action");
         jpanel.add(meleeAttackActioncheckBox, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        voice1CheckBox = new JCheckBox();
-        voice1CheckBox.setText("voice1");
-        jpanel.add(voice1CheckBox, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        voice2CheckBox = new JCheckBox();
-        voice2CheckBox.setText("voice2");
-        jpanel.add(voice2CheckBox, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         stopControl = new JButton();
         stopControl.setText("stopControl");
         jpanel.add(stopControl, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        voice2CheckBox = new JCheckBox();
+        voice2CheckBox.setText("voice2");
+        jpanel.add(voice2CheckBox, new GridConstraints(6, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        voice1CheckBox = new JCheckBox();
+        voice1CheckBox.setText("voice1");
+        jpanel.add(voice1CheckBox, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        grenadeAttackActioncheckBox = new JCheckBox();
+        grenadeAttackActioncheckBox.setText("grenade attack action");
+        jpanel.add(grenadeAttackActioncheckBox, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        stopActioncheckBox = new JCheckBox();
+        stopActioncheckBox.setText("stop action");
+        jpanel.add(stopActioncheckBox, new GridConstraints(7, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
