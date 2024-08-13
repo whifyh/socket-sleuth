@@ -90,13 +90,13 @@ public class Sniper {
         minDelay = 50;
         Random rand = new Random();
         Thread keep = new Thread(() -> {
+            api.logging().raiseInfoEvent("控制中...");
             while (QiangZhanStatus.controlRunningStatus) {
                 for (DataStatusManager.SocketMe socketMe : DataStatusManager.getAllActiveSockets()) {
                     for (String msg : QiangZhanStatus.getSendMessageList()) {
-                        sendMessage(socketMe.socket, Direction.CLIENT_TO_SERVER, false, msg, rand);
+                        sendMessage(socketMe.socket, Direction.CLIENT_TO_SERVER, false, msg, rand, false);
                     }
                 }
-                api.logging().raiseInfoEvent("控制中...");
             }
             api.logging().raiseInfoEvent("控制结束");
         });
@@ -153,11 +153,11 @@ public class Sniper {
                         List<String> lineInput = splitAndTrim(baseInput);
                         for (String input : lineInput) {
                             String newInput = replacePlaceholders(input, payload);
-                            sendMessage(now, selectedDirection, isHexMode, newInput, rand);
+                            sendMessage(now, selectedDirection, isHexMode, newInput, rand, true);
                         }
                     } else {
                         String newInput = replacePlaceholders(baseInput, payload);
-                        sendMessage(now, selectedDirection, isHexMode, newInput, rand);
+                        sendMessage(now, selectedDirection, isHexMode, newInput, rand, true);
                     }
                 }
 
@@ -179,26 +179,30 @@ public class Sniper {
         workerThread.start();
     }
 
-    private void sendMessage(ProxyWebSocket proxyWebSocket, Direction selectedDirection, Boolean isHexMode, String newInput, Random rand) {
+    private void sendMessage(ProxyWebSocket proxyWebSocket, Direction selectedDirection, Boolean isHexMode, String newInput, Random rand, Boolean addLog) {
         // 是否16进制模式
         if (isHexMode) {
             // 将十六进制字符串转换为字节数组
             byte[] binaryData = hexStringToBytes(newInput);
-            api.logging().raiseInfoEvent("[Hex]:" + bytesToHexString(binaryData));
             proxyWebSocket.sendBinaryMessage(ByteArray.byteArray(binaryData), selectedDirection);
-            if (messageView != null) {
-                messageView.getTableModel().addMessage("[Hex]" + newInput, selectedDirection);
+            if (addLog) {
+                api.logging().raiseInfoEvent("[Hex]:" + bytesToHexString(binaryData));
+                if (messageView != null) {
+                    messageView.getTableModel().addMessage("[Hex]" + newInput, selectedDirection);
+                }
+                sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
             }
-            sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
-        } else {
-            api.logging().raiseInfoEvent("[String]:" + newInput);
-            proxyWebSocket.sendTextMessage(newInput, selectedDirection);
-            if (messageView != null) {
-               messageView.getTableModel().addMessage(newInput, selectedDirection);
-            }
-            sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
-        }
 
+        } else {
+            proxyWebSocket.sendTextMessage(newInput, selectedDirection);
+            if (addLog) {
+                api.logging().raiseInfoEvent("[String]:" + newInput);
+                if (messageView != null) {
+                    messageView.getTableModel().addMessage(newInput, selectedDirection);
+                }
+                sentMessages.add(new WebSocketMessage(newInput, selectedDirection));
+            }
+        }
         int delay = rand.nextInt(maxDelay - minDelay + 1) + minDelay;
         try {
             Thread.sleep(delay);
