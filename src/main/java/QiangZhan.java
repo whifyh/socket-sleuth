@@ -5,7 +5,6 @@ import socketsleuth.intruder.executors.Sniper;
 import socketsleuth.intruder.payloads.models.IPayloadModel;
 import whifyh.DataStatusManager;
 import whifyh.QiangZhanStatus;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Iterator;
@@ -78,7 +77,7 @@ public class QiangZhan {
         moveDownCheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (moveDownCheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("down", "[1,204,4,[\"h\",\"%s\",%s,1,0]]");
+                QiangZhanStatus.functionMap.put("down", "[1,2304,4,[\"h\",\"%s\",%s,1,0]]");
             } else {
                 QiangZhanStatus.functionMap.remove("down");
             }
@@ -87,7 +86,7 @@ public class QiangZhan {
         moveLeftCheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (moveLeftCheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("left", "[1,204,4,[\"h\",\"%s\",%s,1,1]]");
+                QiangZhanStatus.functionMap.put("left", "[1,2304,4,[\"h\",\"%s\",%s,1,1]]");
             } else {
                 QiangZhanStatus.functionMap.remove("left");
             }
@@ -96,7 +95,7 @@ public class QiangZhan {
         moverRightCheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (moverRightCheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("right", "[1,204,4,[\"h\",\"%s\",%s,1,2]]");
+                QiangZhanStatus.functionMap.put("right", "[1,2304,4,[\"h\",\"%s\",%s,1,2]]");
             } else {
                 QiangZhanStatus.functionMap.remove("right");
             }
@@ -105,7 +104,7 @@ public class QiangZhan {
         stopActioncheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (stopActioncheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("stop", "[1,204,4,[\"h\",\"%s\",%s,2]]");
+                QiangZhanStatus.functionMap.put("stop", "[1,2304,4,[\"h\",\"%s\",%s,2]]");
             } else {
                 QiangZhanStatus.functionMap.remove("stop");
             }
@@ -114,8 +113,8 @@ public class QiangZhan {
         jumpActioncheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (jumpActioncheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("jump1", "[1,204,4,[\"h\",\"%s\",%s,7]]");
-                QiangZhanStatus.functionMap.put("jump2", "[1,204,4,[\"h\",\"%s\",%s,8]]");
+                QiangZhanStatus.functionMap.put("jump1", "[1,2304,4,[\"h\",\"%s\",%s,7]]");
+                QiangZhanStatus.functionMap.put("jump2", "[1,2304,4,[\"h\",\"%s\",%s,8]]");
             } else {
                 QiangZhanStatus.functionMap.remove("jump1");
                 QiangZhanStatus.functionMap.remove("jump2");
@@ -125,7 +124,7 @@ public class QiangZhan {
         meleeAttackActioncheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (meleeAttackActioncheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("melee", "[1,204,4,[\"h\",\"%s\",%s,11]]");
+                QiangZhanStatus.functionMap.put("melee", "[1,2304,4,[\"h\",\"%s\",%s,11]]");
             } else {
                 QiangZhanStatus.functionMap.remove("melee");
             }
@@ -134,8 +133,8 @@ public class QiangZhan {
         grenadeAttackActioncheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (grenadeAttackActioncheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("grenade1", "[1,204,4,[\"h\",\"%s\",%s,5]]");
-                QiangZhanStatus.functionMap.put("grenade2", "[1,204,4,[\"h\",\"%s\",%s,6]]");
+                QiangZhanStatus.functionMap.put("grenade1", "[1,2304,4,[\"h\",\"%s\",%s,5]]");
+                QiangZhanStatus.functionMap.put("grenade2", "[1,2304,4,[\"h\",\"%s\",%s,6]]");
             } else {
                 QiangZhanStatus.functionMap.remove("grenade1");
                 QiangZhanStatus.functionMap.remove("grenade2");
@@ -145,7 +144,7 @@ public class QiangZhan {
         voice1CheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (voice1CheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("voice1", "[1,204,4,[\"h\",\"%s\",%s,10,4]]");
+                QiangZhanStatus.functionMap.put("voice1", "[1,2304,4,[\"h\",\"%s\",%s,10,4]]");
             } else {
                 QiangZhanStatus.functionMap.remove("voice1");
             }
@@ -154,7 +153,7 @@ public class QiangZhan {
         voice2CheckBox.addActionListener(e -> {
             QiangZhanStatus.sendMessageListCache = null;
             if (voice2CheckBox.isSelected()) {
-                QiangZhanStatus.functionMap.put("voice2", "[1,204,4,[\"h\",\"%s\",%s,10,7]]");
+                QiangZhanStatus.functionMap.put("voice2", "[1,2304,4,[\"h\",\"%s\",%s,10,7]]");
             } else {
                 QiangZhanStatus.functionMap.remove("voice2");
             }

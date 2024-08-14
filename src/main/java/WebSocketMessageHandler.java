@@ -27,6 +27,7 @@ import whifyh.QiangZhanStatus;
 import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 class WebSocketMessageHandler implements ProxyMessageHandler {
 
@@ -142,21 +143,21 @@ class WebSocketMessageHandler implements ProxyMessageHandler {
                 if (index2.has("roomData")) {
                    JSONObject roomData = index2.getJSONObject("roomData");
                    String id = roomData.getString("id");
-                    JSONArray players = roomData.getJSONArray("players");
-                    QiangZhanStatus.nowRoomId = id;
-                    QiangZhanStatus.players = new ArrayList<>();
-                    for (Object player : players) {
-                        QiangZhanStatus.players.add(new QiangZhanStatus.Player(
-                                ((JSONObject) player).getString("name"),
-                                ((JSONObject) player).getInt("id"),
-                                ((JSONObject) player).getInt("camp"),
-                                ((JSONObject) player).getInt("rankLevel"),
-                                ((JSONObject) player).getInt("rankScore")
-                        ));
-                    }
-                    QiangZhanStatus.refuse();
-                    api.logging().raiseInfoEvent("[开始游戏]:" + "[房间号]:" + QiangZhanStatus.nowRoomId + "[Payload]:" + payload);
-                    return;
+                   JSONArray players = roomData.getJSONArray("players");
+                   QiangZhanStatus.nowRoomId = id;
+                   QiangZhanStatus.players = new ArrayList<>();
+                   for (Object player : players) {
+                       QiangZhanStatus.players.add(new QiangZhanStatus.Player(
+                               ((JSONObject) player).getString("name"),
+                               ((JSONObject) player).getInt("id"),
+                               ((JSONObject) player).getInt("camp"),
+                               ((JSONObject) player).getInt("rankLevel"),
+                               ((JSONObject) player).getInt("rankScore")
+                       ));
+                   }
+                   QiangZhanStatus.refuse();
+                   api.logging().raiseInfoEvent("[开始游戏]:" + "[房间号]:" + QiangZhanStatus.nowRoomId + "[Payload]:" + payload);
+                   return;
                 }
                 // 用户信息
                 if (index2.has("userInfo")) {
@@ -167,6 +168,32 @@ class WebSocketMessageHandler implements ProxyMessageHandler {
                     return;
                 }
             }
+
+//            if (jsonObject.getInt(0) == 0 && jsonObject.getInt(1) == 0) {
+//                Object object = jsonObject.get(2);
+//                if (object instanceof JSONArray) {
+//                    // 掉线重连0,a
+//                    JSONArray stringArray = jsonObject.getJSONArray(2);
+//                    if ("0".equals(stringArray.getString(0)) && "a".equals(stringArray.getString(1))) {
+//                        JSONObject info = jsonObject.getJSONArray(2).getJSONArray(2).getJSONObject(2);
+//                        HashMap<String, Object> index2Map = new HashMap<>();
+//                        HashMap<String, Object> roomDataMap = new HashMap<>();
+//                        index2Map.put("roomData", roomDataMap);
+//                        roomDataMap.put("id", info.getString("id"));
+//                        roomDataMap.put("players", info.getJSONArray("players"));
+//                        QiangZhanStatus.controlRunningStatus = false;
+//                        Thread.sleep(1000);
+//                        ArrayList<Object> fixPayload = new ArrayList<>();
+//                        fixPayload.add(2);
+//                        fixPayload.add(1);
+//                        fixPayload.add(index2Map);
+//                        JSONArray newPayload = new JSONArray(fixPayload);
+//                        api.logging().raiseInfoEvent("正在读取对局[fixPayload]:" + newPayload);
+//                        setGunfight(newPayload.toString());
+//                    }
+//                }
+//            }
+
         } catch (Exception e) {
             api.logging().raiseInfoEvent("[解析失败]:" + payload + " [报错原因]:" + e.getMessage() + e.getStackTrace()[e.getStackTrace().length - 1]);
             QiangZhanStatus.controlRunningStatus = false;
