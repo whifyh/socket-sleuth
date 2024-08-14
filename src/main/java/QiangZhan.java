@@ -266,6 +266,9 @@ public class QiangZhan {
         autoSelectedEnemyPlayerCheckBox = new JCheckBox();
         autoSelectedEnemyPlayerCheckBox.setText("AutoSelectedEnemyPlayer");
         jpanel.add(autoSelectedEnemyPlayerCheckBox, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        autoStartControlCheckBox = new JCheckBox();
+        autoStartControlCheckBox.setText("AutoStartControl");
+        jpanel.add(autoStartControlCheckBox, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
