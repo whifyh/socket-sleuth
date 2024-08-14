@@ -1,6 +1,7 @@
 package whifyh;
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.websocket.Direction;
 import socketsleuth.intruder.executors.Sniper;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ public class QiangZhanStatus {
     public static JTextField roomIdTextField;
     public static JCheckBox autoSelectedEnemyPlayerCheckBox;
     public static JCheckBox autoStartControlCheckBox;
+    public static JCheckBox startEarlyGameCheckBox;
     public static List<Integer> selectedPlayerIdList = new ArrayList<>();
     public static Boolean controlRunningStatus = false;
     public static List<String> sendMessageListCache = null;
@@ -23,6 +25,13 @@ public class QiangZhanStatus {
     public static Map<String, String> functionMap = new HashMap<>();
 
     public static Integer userId = null;
+
+    public static List<String> startEarlyGameMsgList = new ArrayList<>(){{
+        add("[1,161,4,[\"2\",\"%s\",%s,%s]]");
+        add("[1,162,4,[\"c\",\"%s\",%s]]");
+        add("[1,163,4,[\"a\",\"%s\",%s]]");
+        add("[1,164,4,[\"d\",\"%s\",%s,0]]");
+    }};
 
     public static class Player {
         public String name;
@@ -73,6 +82,17 @@ public class QiangZhanStatus {
         if (autoStartControlCheckBox.isSelected()) {
             controlRunningStatus = true;
             executor.qiangZhanKeepControl();
+        }
+
+        // 提前开局
+        if (startEarlyGameCheckBox.isSelected()) {
+            players.stream().filter(x -> !Objects.equals(x.id, userId)).forEach(player -> {
+               for (DataStatusManager.SocketMe socketMe : DataStatusManager.getAllActiveSockets()) {
+                    for (String msg : startEarlyGameMsgList) {
+                        executor.sendMessageFast(socketMe.socket, Direction.CLIENT_TO_SERVER, false, String.format(msg, nowRoomId, player.id, player.id));
+                    }
+                }
+            });
         }
     }
 

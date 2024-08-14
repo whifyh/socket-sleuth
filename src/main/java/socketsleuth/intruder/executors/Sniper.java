@@ -179,7 +179,7 @@ public class Sniper {
         workerThread.start();
     }
 
-    private void sendMessage(ProxyWebSocket proxyWebSocket, Direction selectedDirection, Boolean isHexMode, String newInput, Random rand, Boolean addLog) {
+    public void sendMessage(ProxyWebSocket proxyWebSocket, Direction selectedDirection, Boolean isHexMode, String newInput, Random rand, Boolean addLog) {
         // 是否16进制模式
         if (isHexMode) {
             // 将十六进制字符串转换为字节数组
@@ -208,6 +208,17 @@ public class Sniper {
             Thread.sleep(delay);
         } catch (InterruptedException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public void sendMessageFast(ProxyWebSocket proxyWebSocket, Direction selectedDirection, Boolean isHexMode, String newInput) {
+        // 是否16进制模式
+        if (isHexMode) {
+            // 将十六进制字符串转换为字节数组
+            byte[] binaryData = hexStringToBytes(newInput);
+            proxyWebSocket.sendBinaryMessage(ByteArray.byteArray(binaryData), selectedDirection);
+        } else {
+            proxyWebSocket.sendTextMessage(newInput, selectedDirection);
         }
     }
 
