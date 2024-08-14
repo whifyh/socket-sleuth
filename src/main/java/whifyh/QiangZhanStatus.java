@@ -15,6 +15,7 @@ public class QiangZhanStatus {
     public static List<JCheckBox> playerCheckBoxList = new ArrayList<>();
     public static JTextField roomIdTextField;
     public static JCheckBox autoSelectedEnemyPlayerCheckBox;
+    public static JCheckBox autoStartControlCheckBox;
     public static List<Integer> selectedPlayerIdList = new ArrayList<>();
     public static Boolean controlRunningStatus = false;
     public static List<String> sendMessageListCache = null;
@@ -66,6 +67,12 @@ public class QiangZhanStatus {
             playerCheckBoxList.stream()
                     .filter(x -> !x.getText().contains(userCamp))
                     .forEach(AbstractButton::doClick);
+        }
+
+        // 自动启动控制
+        if (autoStartControlCheckBox.isSelected()) {
+            controlRunningStatus = true;
+            executor.qiangZhanKeepControl();
         }
     }
 

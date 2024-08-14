@@ -28,6 +28,7 @@ public class QiangZhan {
     private JTextField roomIdTextField;
     private JPanel playerPanel;
     private JCheckBox autoSelectedEnemyPlayerCheckBox;
+    private JCheckBox autoStartControlCheckBox;
 
     private JButton startControl;
     private JButton stopControl;
@@ -171,6 +172,7 @@ public class QiangZhan {
         QiangZhanStatus.roomIdTextField = roomIdTextField;
         QiangZhanStatus.playerPanel = playerPanel;
         QiangZhanStatus.autoSelectedEnemyPlayerCheckBox = autoSelectedEnemyPlayerCheckBox;
+        QiangZhanStatus.autoStartControlCheckBox = autoStartControlCheckBox;
     }
 
     public void setExecutor(Sniper executor) {
