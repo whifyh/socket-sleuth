@@ -86,15 +86,17 @@ public class Sniper {
     }
 
     public void qiangZhanKeepControl() {
-        maxDelay = 100;
-        minDelay = 50;
-        Random rand = new Random();
         Thread keep = new Thread(() -> {
             api.logging().raiseInfoEvent("控制中...");
             while (QiangZhanStatus.controlRunningStatus) {
                 for (DataStatusManager.SocketMe socketMe : DataStatusManager.getAllActiveSockets()) {
                     for (String msg : QiangZhanStatus.getSendMessageList()) {
-                        sendMessage(socketMe.socket, Direction.CLIENT_TO_SERVER, false, msg, rand, false);
+                        sendMessageFast(socketMe.socket, Direction.CLIENT_TO_SERVER, false, msg);
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
