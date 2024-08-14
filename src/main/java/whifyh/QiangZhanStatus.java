@@ -22,17 +22,21 @@ public class QiangZhanStatus {
     public static Sniper executor;
     public static Map<String, String> functionMap = new HashMap<>();
 
+    public static Integer userId = null;
+
     public static class Player {
         public String name;
         public Integer id;
         public Integer camp;
-        public String openId;
+        public Integer rankLevel;
+        public Integer rankScore;
 
-        public Player(String name, Integer id, Integer camp, String openId) {
+        public Player(String name, Integer id, Integer camp, Integer rankLevel, Integer rankScore) {
             this.name = name;
             this.id = id;
             this.camp = camp;
-            this.openId = openId;
+            this.rankLevel = rankLevel;
+            this.rankScore = rankScore;
         }
     }
 
@@ -47,21 +51,39 @@ public class QiangZhanStatus {
 
         playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
         for (Player player : players) {
-
-            JCheckBox jCheckBox = new JCheckBox("ID:[" + player.id + "] Team:[" + (player.camp.equals(-1) ? "Red]" : "Blue]"));
-            jCheckBox.addActionListener(e -> {
-                sendMessageListCache = null;
-                if (jCheckBox.isSelected()) {
-                    selectedPlayerIdList.add(player.id);
-                } else {
-                    selectedPlayerIdList.remove(player.id);
-                }
-            });
+            JCheckBox jCheckBox = getPlayerCheckBox(player);
             playerPanel.add(jCheckBox);
         }
         playerPanel.setVisible(true);
         playerPanel.revalidate();
         playerPanel.repaint();
+    }
+
+    private static JCheckBox getPlayerCheckBox(Player player) {
+        String team = (player.camp == -1) ? "Red" : "Blue";
+        String rankScoreFormatted = String.format("%-4d", player.rankScore);
+        String rankLevelFormatted = String.format("%-2d", player.rankLevel);
+        StringBuilder checkBoxText = new StringBuilder()
+                .append("ID:[").append(player.id)
+                .append("] Team:[").append(team)
+                .append("] RankScore:[").append(rankScoreFormatted)
+                .append("] RankLevel:[").append(rankLevelFormatted)
+                .append("]");
+
+        if (player.rankScore == 0) {
+            checkBoxText.append(" [BOT]");
+        }
+        JCheckBox jCheckBox = new JCheckBox(checkBoxText.toString());
+
+        jCheckBox.addActionListener(e -> {
+            sendMessageListCache = null;
+            if (jCheckBox.isSelected()) {
+                selectedPlayerIdList.add(player.id);
+            } else {
+                selectedPlayerIdList.remove(player.id);
+            }
+        });
+        return jCheckBox;
     }
 
     public static List<String> getSendMessageList() {

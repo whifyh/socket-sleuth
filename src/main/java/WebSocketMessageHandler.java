@@ -136,32 +136,42 @@ class WebSocketMessageHandler implements ProxyMessageHandler {
     private void setGunfight(String payload) {
         try {
             JSONArray jsonObject = new JSONArray(payload);
-            int index0 = jsonObject.getInt(0);
-            int index1 = jsonObject.getInt(1);
-            // 开始游戏封包:2,1
-            if (index0 == 2 && index1 == 1) {
-                JSONObject roomData = jsonObject.getJSONObject(2).getJSONObject("roomData");
-                String id = roomData.getString("id");
-                JSONArray players = roomData.getJSONArray("players");
-
-                QiangZhanStatus.nowRoomId = id;
-                QiangZhanStatus.players = new ArrayList<>();
-                for (Object player : players) {
-                    QiangZhanStatus.players.add(new QiangZhanStatus.Player(
-                            ((JSONObject) player).getString("name"),
-                            ((JSONObject) player).getInt("id"),
-                            ((JSONObject) player).getInt("camp"),
-                            ((JSONObject) player).getString("openId")
-                    ));
+            // 封包:2,1
+            if (jsonObject.getInt(0) == 2 && jsonObject.getInt(1) == 1) {
+                JSONObject index2 = jsonObject.getJSONObject(2);
+                // 开始游戏
+                if (index2.has("roomData")) {
+                   JSONObject roomData = index2.getJSONObject("roomData");
+                   String id = roomData.getString("id");
+                    JSONArray players = roomData.getJSONArray("players");
+                    QiangZhanStatus.nowRoomId = id;
+                    QiangZhanStatus.players = new ArrayList<>();
+                    for (Object player : players) {
+                        QiangZhanStatus.players.add(new QiangZhanStatus.Player(
+                                ((JSONObject) player).getString("name"),
+                                ((JSONObject) player).getInt("id"),
+                                ((JSONObject) player).getInt("camp"),
+                                ((JSONObject) player).getInt("rankLevel"),
+                                ((JSONObject) player).getInt("rankScore")
+                        ));
+                    }
+                    QiangZhanStatus.refuse();
+                    api.logging().raiseInfoEvent("[开始游戏]:" + "[房间号]:" + QiangZhanStatus.nowRoomId + "[Payload]:" + payload);
+                    return;
                 }
-                QiangZhanStatus.refuse();
-                api.logging().raiseInfoEvent("[开始游戏]:" + payload + "[房间号]:" + QiangZhanStatus.nowRoomId);
+                // 用户信息
+                if (index2.has("userInfo")) {
+                    QiangZhanStatus.controlRunningStatus = false;
+                    JSONObject userInfo = index2.getJSONObject("userInfo");
+                    QiangZhanStatus.userId = userInfo.getInt("id");
+                    api.logging().raiseInfoEvent("[用户信息]: [ID]:" + QiangZhanStatus.userId + "[Payload]:" + payload);
+                    return;
+                }
             }
         } catch (Exception e) {
-            api.logging().raiseInfoEvent("[解析失败][开始游戏]:" + payload + " [报错原因]:" + e.getMessage() + e.getStackTrace()[e.getStackTrace().length - 1]);
+            api.logging().raiseInfoEvent("[解析失败]:" + payload + " [报错原因]:" + e.getMessage() + e.getStackTrace()[e.getStackTrace().length - 1]);
             QiangZhanStatus.controlRunningStatus = false;
         }
-
     }
 
     private boolean shouldDropMessage(
