@@ -4,10 +4,7 @@ import burp.api.montoya.MontoyaApi;
 import socketsleuth.intruder.executors.Sniper;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class QiangZhanStatus {
 
@@ -15,7 +12,9 @@ public class QiangZhanStatus {
     public static List<Player> players;
     public static String nowRoomId;
     public static JPanel playerPanel;
+    public static List<JCheckBox> playerCheckBoxList = new ArrayList<>();
     public static JTextField roomIdTextField;
+    public static JCheckBox autoSelectedEnemyPlayerCheckBox;
     public static List<Integer> selectedPlayerIdList = new ArrayList<>();
     public static Boolean controlRunningStatus = false;
     public static List<String> sendMessageListCache = null;
@@ -44,6 +43,7 @@ public class QiangZhanStatus {
         roomIdTextField.setText(nowRoomId);
 
         selectedPlayerIdList.clear();
+        playerCheckBoxList.clear();
         controlRunningStatus = false;
         playerPanel.removeAll();
         sendMessageListCache = null;
@@ -53,10 +53,20 @@ public class QiangZhanStatus {
         for (Player player : players) {
             JCheckBox jCheckBox = getPlayerCheckBox(player);
             playerPanel.add(jCheckBox);
+            playerCheckBoxList.add(jCheckBox);
         }
         playerPanel.setVisible(true);
         playerPanel.revalidate();
         playerPanel.repaint();
+
+        // 自动选敌
+        if (autoSelectedEnemyPlayerCheckBox.isSelected()) {
+            Player player = players.stream().filter(x -> Objects.equals(x.id, userId)).findFirst().get();
+            String userCamp = (player.camp == -1) ? "Red" : "Blue";
+            playerCheckBoxList.stream()
+                    .filter(x -> !x.getText().contains(userCamp))
+                    .forEach(AbstractButton::doClick);
+        }
     }
 
     private static JCheckBox getPlayerCheckBox(Player player) {

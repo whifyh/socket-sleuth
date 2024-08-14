@@ -24,7 +24,6 @@ import socketsleuth.WebSocketInterceptionRulesTableModel;
 import websocket.MessageProvider;
 import whifyh.DataStatusManager;
 import whifyh.QiangZhanStatus;
-
 import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
