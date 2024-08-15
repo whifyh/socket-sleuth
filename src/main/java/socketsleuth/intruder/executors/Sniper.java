@@ -93,7 +93,7 @@ public class Sniper {
                     for (String msg : QiangZhanStatus.getSendMessageList()) {
                         sendMessageFast(socketMe.socket, Direction.CLIENT_TO_SERVER, false, msg);
                         try {
-                            Thread.sleep(50);
+                            Thread.sleep(QiangZhanStatus.controlPowerSlider.getValue());
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }

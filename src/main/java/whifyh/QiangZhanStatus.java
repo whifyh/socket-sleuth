@@ -18,6 +18,7 @@ public class QiangZhanStatus {
     public static JCheckBox autoSelectedEnemyPlayerCheckBox;
     public static JCheckBox autoStartControlCheckBox;
     public static JCheckBox startEarlyGameCheckBox;
+    public static JSlider controlPowerSlider;
     public static List<Integer> selectedPlayerIdList = new ArrayList<>();
     public static Boolean controlRunningStatus = false;
     public static List<String> sendMessageListCache = null;
