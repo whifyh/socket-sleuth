@@ -6,8 +6,6 @@ import socketsleuth.intruder.payloads.models.IPayloadModel;
 import whifyh.DataStatusManager;
 import whifyh.QiangZhanStatus;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.Iterator;
 import static burp.api.montoya.websocket.Direction.CLIENT_TO_SERVER;
@@ -30,7 +28,7 @@ public class QiangZhan {
     private JPanel playerPanel;
     private JCheckBox autoSelectedEnemyPlayerCheckBox;
     private JCheckBox autoStartControlCheckBox;
-    private JCheckBox startEarlyGameCheckBox;
+    private JCheckBox disarmEquipmentCheckBox;
     private JSlider controlPowerSlider;
 
     private JButton startControl;
@@ -178,7 +176,7 @@ public class QiangZhan {
         QiangZhanStatus.playerPanel = playerPanel;
         QiangZhanStatus.autoSelectedEnemyPlayerCheckBox = autoSelectedEnemyPlayerCheckBox;
         QiangZhanStatus.autoStartControlCheckBox = autoStartControlCheckBox;
-        QiangZhanStatus.startEarlyGameCheckBox = startEarlyGameCheckBox;
+        QiangZhanStatus.disarmEquipmentCheckBox = disarmEquipmentCheckBox;
         QiangZhanStatus.controlPowerSlider = controlPowerSlider;
         controlPowerSlider.addChangeListener(e -> controlPowerLabel.setText(String.valueOf(controlPowerSlider.getValue())));
     }
@@ -287,9 +285,9 @@ public class QiangZhan {
         autoStartControlCheckBox = new JCheckBox();
         autoStartControlCheckBox.setText("AutoStartControl");
         jpanel.add(autoStartControlCheckBox, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        startEarlyGameCheckBox = new JCheckBox();
-        startEarlyGameCheckBox.setText("StartEarlyGame");
-        jpanel.add(startEarlyGameCheckBox, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        disarmEquipmentCheckBox = new JCheckBox();
+        disarmEquipmentCheckBox.setText("disarmEquipmentGame");
+        jpanel.add(disarmEquipmentCheckBox, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         controlPowerLabel = new JLabel();
         controlPowerLabel.setText("125");
         jpanel.add(controlPowerLabel, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

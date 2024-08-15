@@ -17,7 +17,7 @@ public class QiangZhanStatus {
     public static JTextField roomIdTextField;
     public static JCheckBox autoSelectedEnemyPlayerCheckBox;
     public static JCheckBox autoStartControlCheckBox;
-    public static JCheckBox startEarlyGameCheckBox;
+    public static JCheckBox disarmEquipmentCheckBox;
     public static JSlider controlPowerSlider;
     public static List<Integer> selectedPlayerIdList = new ArrayList<>();
     public static Boolean controlRunningStatus = false;
@@ -27,11 +27,17 @@ public class QiangZhanStatus {
 
     public static Integer userId = null;
 
-    public static List<String> startEarlyGameMsgList = new ArrayList<>(){{
-        add("[1,161,4,[\"2\",\"%s\",%s,%s]]");
-        add("[1,162,4,[\"c\",\"%s\",%s]]");
-        add("[1,163,4,[\"a\",\"%s\",%s]]");
-        add("[1,164,4,[\"d\",\"%s\",%s,0]]");
+    public static List<String> disarmEquipmentMsgList = new ArrayList<>(){{
+        add("[1,89,49,{\"objType\":4,\"objId\":4001001,\"pid\":%s}]");
+        add("[1,93,49,{\"objType\":4,\"objId\":4005001,\"pid\":%s}]");
+        add("[1,96,49,{\"objType\":4,\"objId\":4006001,\"pid\":%s}]");
+        add("[1,99,49,{\"objType\":5,\"objId\":5001001,\"pid\":%s}]");
+        add("[1,99,49,{\"objType\":6,\"objId\":6001001,\"pid\":%s}]");
+        add("[1,99,49,{\"objType\":7,\"objId\":7001001,\"pid\":%s}]");
+        add("[1,108,49,{\"objType\":8,\"objId\":8001001,\"pid\":%s}]");
+        add("[1,111,49,{\"objType\":9,\"objId\":9001001,\"pid\":%s}]");
+        add("[1,114,49,{\"objType\":13,\"objId\":0,\"pid\":%s}]");
+        add("[1,117,49,{\"objType\":3,\"objId\":0,\"pid\":%s}]");
     }};
 
     public static class Player {
@@ -79,21 +85,21 @@ public class QiangZhanStatus {
                     .forEach(AbstractButton::doClick);
         }
 
+        // 提前开局
+        if (disarmEquipmentCheckBox.isSelected()) {
+            players.stream().filter(x -> !Objects.equals(x.id, userId)).forEach(player -> {
+               for (DataStatusManager.SocketMe socketMe : DataStatusManager.getAllActiveSockets()) {
+                    for (String msg : disarmEquipmentMsgList) {
+                        executor.sendMessageFast(socketMe.socket, Direction.CLIENT_TO_SERVER, false, String.format(msg, player.id));
+                    }
+                }
+            });
+        }
+
         // 自动启动控制
         if (autoStartControlCheckBox.isSelected()) {
             controlRunningStatus = true;
             executor.qiangZhanKeepControl();
-        }
-
-        // 提前开局
-        if (startEarlyGameCheckBox.isSelected()) {
-            players.stream().filter(x -> !Objects.equals(x.id, userId)).forEach(player -> {
-               for (DataStatusManager.SocketMe socketMe : DataStatusManager.getAllActiveSockets()) {
-                    for (String msg : startEarlyGameMsgList) {
-                        executor.sendMessageFast(socketMe.socket, Direction.CLIENT_TO_SERVER, false, String.format(msg, nowRoomId, player.id, player.id));
-                    }
-                }
-            });
         }
     }
 
